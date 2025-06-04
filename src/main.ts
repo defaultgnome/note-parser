@@ -21,6 +21,30 @@ const articleExample = {
   source: "Who Reported on this",
 };
 
+const testData = `
+### **דו"ח שדה 1 – תאונת חזית אל חזית**
+
+**תאריך:** 02/06/2025
+**שעה:** 08:45
+**מיקום:** רחוב יגאל אלון פינת דרך השלום, תל אביב
+**רכבים מעורבים:**
+
+* רכב פרטי מסוג יונדאי i30, נהג: גבר, כבן 34
+* רכב פרטי מסוג טויוטה קורולה, נהגת: אישה, כבת 42
+
+**תיאור האירוע:**
+רכב מסוג יונדאי נסע מערבה ברחוב יגאל אלון, בעת שפנה שמאלה לדרך השלום, חצה את הנתיב הנגדי והתנגש חזיתית בטויוטה שבאה ממול. שני כלי הרכב נבלמו במקום.
+
+**נזק לרכוש:**
+שני הרכבים ניזוקו קשות בחזית. נזק כולל לפגושים, מכסה מנוע ושמשות קדמיות.
+
+**פגיעות גופניות:**
+הנהג ברכב היונדאי נפצע קל (חבלות בצוואר). הנהגת בטויוטה התלוננה על כאבים בחזה.
+
+**פעולות שבוצעו:**
+זומנה ניידת טיפול נמרץ. ניידת משטרה חסמה את הצומת. בוצעה בדיקת ינשוף לנהגים – תוצאות תקינות. הנהגים פונו לבית החולים איכילוב.
+`;
+
 // Initialize Ollama
 const ollama = new Ollama(); // Assumes Ollama is running on default http://localhost:11434
 
@@ -29,6 +53,9 @@ const inputTextElement = document.getElementById(
 ) as HTMLTextAreaElement;
 const submitButtonElement = document.getElementById(
   "submitButton"
+) as HTMLButtonElement;
+const loadTestDataButtonElement = document.getElementById(
+  "loadTestDataButton"
 ) as HTMLButtonElement;
 const outputTextElement = document.getElementById(
   "outputText"
@@ -218,6 +245,11 @@ Extract the information as per the schema.
     details: lastAttemptError ? String(lastAttemptError) : "Unknown error",
   };
 }
+
+// Event listener for the new button to load test data
+loadTestDataButtonElement.addEventListener("click", () => {
+  inputTextElement.value = testData;
+});
 
 submitButtonElement.addEventListener("click", async () => {
   const text = inputTextElement.value;
