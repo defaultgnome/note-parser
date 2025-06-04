@@ -51,9 +51,9 @@ submitButtonElement.addEventListener("click", async () => {
   try {
     const extractedData = await extractDataWithOllama(text, logMessageToUser);
     // Final result (or error from extraction) goes to outputTextElement
-    outputTextElement.value = JSON.stringify(extractedData, null, 2);
-    if (extractedData.error) {
-      logMessageToUser(`Extraction failed: ${extractedData.error}`);
+    outputTextElement.value = JSON.stringify(extractedData.data, null, 2);
+    if (extractedData.status === "error") {
+      logMessageToUser(`Extraction failed`);
     } else {
       logMessageToUser("Extraction successful.");
     }

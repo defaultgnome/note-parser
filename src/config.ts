@@ -20,4 +20,4 @@ export const articleExample = {
   source: "Who Reported on this",
 };
 
-export let maxAttempts = 5;
+export let maxAttempts = 3;

@@ -9,7 +9,7 @@ const schemaForPrompt = schemaToJSON(articleSchema);
 export async function extractDataWithOllama(
   text: string,
   log: (message: string) => void
-): Promise<any> {
+): Promise<{ status: "success" | "error"; data?: Record<string, any> }> {
   let lastAttemptError: any = null;
   let previousAssistantResponseContent: string | null = null;
 
@@ -92,10 +92,11 @@ Extract the information as per the schema.
       previousAssistantResponseContent = response.message?.content || "";
 
       if (response.message && response.message.content) {
+        let jsonData: Record<string, any> | undefined = undefined;
         try {
-          const jsonData = JSON.parse(response.message.content);
+          jsonData = JSON.parse(response.message.content);
           const validatedData = articleSchema.parse(jsonData); // Zod validation
-          return validatedData; // Success!
+          return { status: "success", data: validatedData }; // Success!
         } catch (parseOrValidationError) {
           console.error(
             `Attempt ${attempt}/${maxAttempts} failed during parse/validation:`,
@@ -114,13 +115,14 @@ Extract the information as per the schema.
 
           if (attempt >= maxAttempts) {
             // Final attempt also failed
+            log(
+              `Failed after ${maxAttempts} attempts. see console for more error details`
+            );
+            console.error(errorMessage);
+            // we return the last chat response
             return {
-              error: `Failed after ${maxAttempts} attempts. Last error: ${errorMessage}`,
-              details:
-                parseOrValidationError instanceof z.ZodError
-                  ? parseOrValidationError.issues
-                  : String(parseOrValidationError),
-              rawResponse: response.message.content,
+              status: "error",
+              data: jsonData ?? { raw: response.message.content },
             };
           }
           // If not max attempts, loop continues for the next attempt
@@ -135,7 +137,11 @@ Extract the information as per the schema.
         previousAssistantResponseContent = ""; // Clear previous response as it was empty/invalid
         if (attempt >= maxAttempts) {
           return {
-            error: `Failed after ${maxAttempts} attempts. Last error: ${lastAttemptError.message}`,
+            status: "error",
+            data: {
+              message: `Failed after ${maxAttempts} attempts.`,
+              error: `${lastAttemptError.message}`,
+            },
           };
         }
       }
@@ -151,8 +157,12 @@ Extract the information as per the schema.
 
       if (attempt >= maxAttempts) {
         return {
-          error: `Ollama API error after ${maxAttempts} attempts: ${apiErrorMessage}`,
-          details: String(apiError),
+          status: "error",
+          data: {
+            message: `Ollama API error after ${maxAttempts} attempts.`,
+            error: apiErrorMessage,
+            details: String(apiError),
+          },
         };
       }
     }
@@ -160,7 +170,10 @@ Extract the information as per the schema.
 
   // Fallback if loop finishes unexpectedly (should be covered by returns inside)
   return {
-    error: "Extraction failed after maximum attempts.",
-    details: lastAttemptError ? String(lastAttemptError) : "Unknown error",
+    status: "error",
+    data: {
+      mesage: "Extraction failed after maximum attempts.",
+      details: lastAttemptError ? String(lastAttemptError) : "Unknown error",
+    },
   };
 }
