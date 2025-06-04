@@ -17,3 +17,18 @@ bun run dev
 ```
 
 Then open `http://localhost:5173` in your browser.
+
+## TODO
+
+- add package.json scripts
+- core logic package
+  - add dependecies logs (missing ollama, etc...)
+  - options for config
+- expose with cli
+  - use config file
+- expose with web frontend
+  - use config file
+  - add new article form?
+  - add form to update data before save
+- save to local sqllite db
+  - db browser?
