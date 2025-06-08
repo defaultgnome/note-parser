@@ -3,21 +3,17 @@ import { z } from "zod/v4";
 export const model = "gemma3:latest";
 
 export const articleSchema = z.object({
-  title: z.string().min(1, "Title cannot be empty"),
-  description: z.string(),
+  description: z.string().min(1, "Description cannot be empty"),
   location: z.string(),
   tags: z.array(z.string()).default([]),
-  reportedAt: z.coerce.date(),
-  source: z.string().default("Unknown"),
+  timestamp: z.iso.datetime(),
 });
 
 export const articleExample = {
-  title: "The title of the article",
-  description: "The description of the article",
-  location: "Argentina, Buenos Aires, La Plata",
-  tags: ["tag1", "tag2"],
-  reportedAt: new Date().toISOString(),
-  source: "Who Reported on this",
+  description: "סנוור בלייזר בכביש 450 דיר עמאר",
+  location: "בכביש 450 דיר עמאר",
+  tags: ["סנוור בלייזר"],
+  timestamp: new Date().toISOString(),
 };
 
 export let maxAttempts = 3;
