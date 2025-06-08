@@ -4,10 +4,10 @@ Note Parser is here to help you parse semi-structured notes into strict JSONs.
 
 ## Prerequisites
 
-Make sure you have `ollama` installed and running, with your model downloaded, by default
-it uses the `gemma3:latest` model.
+Make sure you have [Ollama](https://ollama.com/) installed and running, with your model downloaded, by default
+it uses the [`gemma3:latest`](https://ollama.com/library/gemma3) model.
 
-Also have `bun` installed.
+Also have [Bun](https://bun.sh/) installed .
 
 Run:
 
@@ -16,7 +16,14 @@ bun install
 bun run dev
 ```
 
-Then open `http://localhost:5173` in your browser.
+Then open `http://localhost:3000` in your browser.
+
+## Flow
+
+![./docs/data-pipeline.png]
+
+In the web studio, you have two tabs: **Import**, **Edit**.
+You import docx file with Import, and then Edit the entries and confirm them in the Edit page.
 
 ## TODO
 
