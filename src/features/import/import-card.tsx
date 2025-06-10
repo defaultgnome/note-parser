@@ -7,6 +7,7 @@ import {
   type SetStateAction,
 } from "react";
 import { FileUp, Trash2 } from "lucide-react";
+import mammoth from "mammoth";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -47,12 +48,29 @@ export function ImportCard({ rawText, setRawText }: Props) {
     if (!file) {
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      setRawText(text);
-    };
-    reader.readAsText(file);
+
+    if (file.name.endsWith(".docx")) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        try {
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          setRawText(result.value);
+        } catch (err) {
+          console.error(err);
+          error("Failed to parse .docx file.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        setRawText(text);
+      };
+      reader.readAsText(file);
+    }
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -95,7 +113,7 @@ export function ImportCard({ rawText, setRawText }: Props) {
           >
             <input
               type="file"
-              accept=".txt,.docx,.doc"
+              accept=".txt,.docx"
               className="hidden"
               ref={fileInputRef}
               onChange={selectFileToUpload}
