@@ -1,3 +1,5 @@
+import { FileUp, Trash2 } from "lucide-react";
+import mammoth from "mammoth";
 import {
   useRef,
   useState,
@@ -6,8 +8,6 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { FileUp, Trash2 } from "lucide-react";
-import mammoth from "mammoth";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -18,30 +18,14 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import { useConsoleStore } from "~/features/console/console-store";
+import { PreProcessingCard } from "./pre-processing-card";
 
 export function ImportCard({ rawText, setRawText }: Props) {
-  const [isProcessing, startProcessingTransition] = useTransition();
-  const [selectedAlgo, setSelectedAlgo] = useState<Algorithms | null>(null);
-  const { info, error } = useConsoleStore();
+  const error = useConsoleStore((s) => s.error);
+  const debug = useConsoleStore((s) => s.debug);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const selectAlgo = (algo: string) => {
-    if (!algorithms.some((alg) => alg.name === algo)) {
-      throw new Error(
-        "UNREACHABLE: algo in select must match predefined algos",
-      );
-    }
-    setSelectedAlgo(algo as Algorithms);
-  };
 
   const selectFileToUpload = (e: ChangeEvent) => {
     const file = (e.target as HTMLInputElement).files?.[0];
@@ -56,9 +40,10 @@ export function ImportCard({ rawText, setRawText }: Props) {
         try {
           const result = await mammoth.extractRawText({ arrayBuffer });
           setRawText(result.value);
+          debug(".docx File parsed successfully");
         } catch (err) {
           console.error(err);
-          error("Failed to parse .docx file.");
+          error("Failed to parse .docx file. See DevTools for more details.");
         }
       };
       reader.readAsArrayBuffer(file);
@@ -67,6 +52,7 @@ export function ImportCard({ rawText, setRawText }: Props) {
       reader.onload = (e) => {
         const text = e.target?.result as string;
         setRawText(text);
+        debug("File parsed successfully");
       };
       reader.readAsText(file);
     }
@@ -74,27 +60,6 @@ export function ImportCard({ rawText, setRawText }: Props) {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-  };
-
-  const processFile = () => {
-    if (!rawText.trim()) {
-      error("Cannot process empty text.");
-      return;
-    }
-    if (!selectedAlgo) {
-      error("Please select a processing algorithm.");
-      return;
-    }
-    startProcessingTransition(async () => {
-      const processedText = await algorithms
-        .find((alg) => alg.name === selectedAlgo)
-        ?.process(rawText);
-      if (!processedText) {
-        error("Failed to process text.");
-        return;
-      }
-      setRawText(processedText);
-    });
   };
 
   return (
@@ -146,57 +111,12 @@ export function ImportCard({ rawText, setRawText }: Props) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <div className="flex items-center gap-4">
-          <Select onValueChange={selectAlgo}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select Algorithm" />
-            </SelectTrigger>
-            <SelectContent>
-              {algorithms.map((alg) => (
-                <SelectItem
-                  key={alg.name}
-                  value={alg.name}
-                  disabled={alg.isDisabled}
-                >
-                  {alg.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button onClick={processFile} disabled={isProcessing}>
-            {isProcessing ? "Processing..." : "Process"}
-          </Button>
-        </div>
+      <CardFooter>
+        <PreProcessingCard rawText={rawText} setRawText={setRawText} />
       </CardFooter>
     </Card>
   );
 }
-
-const algorithms = [
-  {
-    name: "trim",
-    label: "Trim Whitespaces",
-    isDisabled: false,
-    process: async (rawText: string) => {
-      return rawText
-        .trim()
-        .split("\n")
-        .map((v) => v.trim())
-        .filter((v) => v.length > 0)
-        .join("\n");
-    },
-  },
-  {
-    name: "pack-with-title",
-    label: "Pack with Title",
-    isDisabled: false,
-    process: async (rawText: string) => {
-      return rawText;
-    },
-  },
-] as const;
-type Algorithms = (typeof algorithms)[number]["name"];
 
 interface Props {
   rawText: string;

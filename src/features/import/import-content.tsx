@@ -4,13 +4,12 @@ import { useState } from "react";
 import { ImportCard } from "./import-card";
 import { RawNotesTable } from "./raw-notes-table";
 import { Separator } from "~/components/ui/separator";
-import type { TempRawNote } from "./types";
 import { api } from "~/trpc/react";
 import { useConsoleStore } from "../console/console-store";
 
 export function ImportContent() {
-  const info = useConsoleStore((s) => s.info);
   const warn = useConsoleStore((s) => s.warning);
+  const success = useConsoleStore((s) => s.success);
   const [rawText, setRawText] = useState("");
   const rawNotes =
     rawText.trim().length > 0
@@ -20,12 +19,13 @@ export function ImportContent() {
           .map((v) => ({ value: v }))
       : [];
   const saveNotesMuatation = api.notes.saveRawNotes.useMutation();
-  const saveNotes = () => {
+  const saveNotes = async () => {
     if (rawNotes.length === 0) {
       warn("No notes to save");
       return;
     }
-    saveNotesMuatation.mutate(rawNotes);
+    await saveNotesMuatation.mutateAsync(rawNotes);
+    success(`${rawNotes.length} notes saved`);
     setRawText("");
   };
   return (
