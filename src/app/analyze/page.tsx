@@ -1,9 +1,9 @@
 import { HydrateClient } from "~/trpc/server";
 
-export default async function HomePage() {
+export default async function AnalyzePage() {
   return (
     <HydrateClient>
-      <h1>Welcome to Note Parser!</h1>
+      <h1>analyze</h1>
     </HydrateClient>
   );
 }
