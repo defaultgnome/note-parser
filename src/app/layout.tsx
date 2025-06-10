@@ -38,10 +38,10 @@ export default async function RootLayout({
           >
             <SidebarProvider defaultOpen={sidebarDefaultOpen}>
               <AppSidebar />
-              <main className="w-full p-4">
+              <div className="flex w-full flex-col p-4">
                 <SidebarPageHeader />
-                {children}
-              </main>
+                <main className="flex-1 p-4">{children}</main>
+              </div>
             </SidebarProvider>
           </ThemeProvider>
         </TRPCReactProvider>
