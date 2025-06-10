@@ -9,6 +9,7 @@ import { AppSidebar } from "~/features/sidebar/app-sidebar";
 import { cookies } from "next/headers";
 import { SidebarPageHeader } from "~/features/sidebar/sidebar-page-header";
 import { ThemeProvider } from "~/features/theme/theme-provider";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Note Parser",
@@ -43,6 +44,7 @@ export default async function RootLayout({
                 <main className="flex-1 p-4">{children}</main>
               </div>
             </SidebarProvider>
+            <Toaster />
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

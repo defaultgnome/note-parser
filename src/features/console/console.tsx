@@ -15,13 +15,14 @@ import {
   DrawerTrigger,
 } from "~/components/ui/drawer";
 import { Toggle } from "~/components/ui/toggle";
-import { useConsoleStore } from "./console-store";
+import { useConsoleStore, type ConsoleLogType } from "./console-store";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { cn } from "~/lib/utils";
 
 export function Console() {
   const [isOpen, setIsOpen] = useState(false);
-  const { logs, clearLogs } = useConsoleStore();
+  const logs = useConsoleStore((s) => s.logs);
+  const clearLogs = useConsoleStore((s) => s.clearLogs);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -54,11 +55,9 @@ export function Console() {
             </DrawerDescription>
           </DrawerHeader>
           <ScrollArea className="bg-muted flex h-[300px] flex-col gap-2 rounded-md border p-4 pb-0 font-mono">
-            {[...logs, ...logs, ...logs, ...logs, ...logs, ...logs].map(
-              (log, index) => (
-                <LogLine key={index} log={log} />
-              ),
-            )}
+            {logs.map((log, index) => (
+              <LogLine key={index} log={log} />
+            ))}
             {logs.length === 0 && (
               <p className="text-muted-foreground text-sm">No logs yet.</p>
             )}
@@ -85,11 +84,7 @@ export function Console() {
   );
 }
 
-function LogLine({
-  log,
-}: {
-  log: { message: string; type: "info" | "error" | "warning" | "success" };
-}) {
+function LogLine({ log }: { log: { message: string; type: ConsoleLogType } }) {
   return (
     <div className="flex items-center gap-2">
       <p

@@ -32,7 +32,7 @@ export default async function HomePage() {
             <p className="text-muted-foreground mt-2">
               Head over to the{" "}
               <Link href="/import">
-                <strong className="text-accent">Import</strong>
+                <strong className="text-link">Import</strong>
               </Link>{" "}
               tab to begin. You can upload files in various formats like{" "}
               <code className="text-primary">.txt</code>,{" "}
@@ -59,7 +59,7 @@ export default async function HomePage() {
             <p className="text-muted-foreground mt-2">
               Next, in the{" "}
               <Link href="/enrich">
-                <strong className="text-accent">Enrich</strong>
+                <strong className="text-link">Enrich</strong>
               </Link>{" "}
               tab, we use the power of AI to bring structure to your raw data.
               We leverage a local AI model through Ollama to parse the raw text
@@ -71,7 +71,7 @@ export default async function HomePage() {
                 href="https://ollama.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-accent hover:underline"
+                className="text-link hover:underline"
               >
                 Ollama
               </Link>{" "}
@@ -87,7 +87,7 @@ export default async function HomePage() {
             <p className="text-muted-foreground mt-2">
               The{" "}
               <Link href="/database">
-                <strong className="text-accent">Database</strong>
+                <strong className="text-link">Database</strong>
               </Link>{" "}
               tab is where you can see your structured data. It's split into two
               parts:
@@ -120,7 +120,7 @@ export default async function HomePage() {
                 <p className="text-muted-foreground mt-2">
                   The upcoming{" "}
                   <Link href="/analyze">
-                    <strong className="text-accent">Analyze</strong>
+                    <strong className="text-link">Analyze</strong>
                   </Link>{" "}
                   tab will feature a variety of charts and visualizations. We're
                   also exploring machine learning models to help you uncover
