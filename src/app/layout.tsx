@@ -42,6 +42,9 @@ export default async function RootLayout({
               <div className="flex w-full flex-col p-4">
                 <SidebarPageHeader />
                 <main className="flex-1 p-4">{children}</main>
+                <footer className="mt-12 text-xs text-muted-foreground text-center w-full">
+                  &copy; {new Date().getFullYear()} Note Parser. All rights reserved.
+                </footer>
               </div>
             </SidebarProvider>
             <Toaster />
