@@ -4,6 +4,10 @@ import { notes, rawNotes, rawNotesToNotes } from "~/server/db/schema";
 import { enrichRawNotes } from "./enrich-raw-note";
 import { isNull, lt, eq } from "drizzle-orm";
 
+// TODO: update the schema for the events types multi tags (one to many), same for sectors (but that a one to one)
+// TODO: create endpoints to get the select options
+// TODO: when creating raw note, we should create the relation table with an empty note id, and have isConfiremd false, and isAIEnriched false, isGeoEnriched false
+// TODO: add an RTL toggle for the whole site
 export const notesRouter = createTRPCRouter({
   getUnconfirmed: publicProcedure
     .input(z.object({
